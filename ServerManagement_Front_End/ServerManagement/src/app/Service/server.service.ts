@@ -35,30 +35,43 @@ export class ServerService {
         catchError(this.handleError)
       );
 
-  filter$ = (status:Status, response:CustomResponse)=> <Observable<CustomResponse>>
-   new Observable<CustomResponse>(
-     subscriber => {
-       console.log(response);
+  filter$ = (status: Status, response: CustomResponse) =>
+    new Observable<CustomResponse>(subscriber => {
+      console.log(response);
 
-       subscriber.next(
-         status === Status.All ? {...response, message: `Servers filtered by ${status} status`} :
-         {
-           ...response,
-           message: response.data.servers?.filter(server => server.status === status).length > 0 ?
-             `Servers filter by${status === Status.SERVER_UP ?
-               `SERVER UP` : `SERVER DOWN`} status`
-             : `No servers of ${status} found`,
-           data: {
-               servers: response.data.servers?.filter(server => server.status === status)
-             }
-         }
-       );
-       subscriber.complete();
-     }
-   ).pipe(
-       tap(console.log),
-       catchError(this.handleError)
-     );
+      if (response.data?.servers) {
+        const filteredServers = response.data.servers.filter(
+          server => server.status === status
+        );
+        subscriber.next({
+          ...response,
+          message: status === Status.All
+            ? `Servers filtered by ${status} status`
+            : filteredServers.length > 0
+              ? `Servers filtered by ${
+                status === Status.SERVER_UP ? 'SERVER UP' : 'SERVER DOWN'
+              } status`
+              : `No servers of ${status} found`,
+          data: {
+            servers: filteredServers
+          }
+        });
+      } else {
+        subscriber.next({
+          ...response,
+          message: "No servers found",
+          data: {
+            servers: [],
+          },
+        });
+      }
+
+      subscriber.complete();
+    })
+      .pipe(
+        tap(console.log),
+        catchError(this.handleError)
+      );
 
   delete$=(serverId:number)=> <Observable<CustomResponse>>
     this.http.delete<CustomResponse>(`${this.apiUrl}/delete/${serverId}`)
@@ -72,6 +85,34 @@ export class ServerService {
     console.log(error);
     return throwError(() => new Error(`Error :${error.status}`));
   }
+
+
+
+  ///// filter on syntax diff
+  // filter$ = (status:Status, response:CustomResponse)=> <Observable<CustomResponse>>
+  //   new Observable<CustomResponse>(
+  //     subscriber => {
+  //       console.log(response);
+  //
+  //       subscriber.next(
+  //         status === Status.All ? {...response, message: `Servers filtered by ${status} status`} :
+  //           {
+  //             ...response,
+  //             message: response.data.servers?.filter(server => server.status === status).length > 0 ?
+  //               `Servers filter by${status === Status.SERVER_UP ?
+  //                 `SERVER UP` : `SERVER DOWN`} status`
+  //               : `No servers of ${status} found`,
+  //             data: {
+  //               servers: response.data.servers?.filter(server => server.status === status)
+  //             }
+  //           }
+  //       );
+  //       subscriber.complete();
+  //     }
+  //   ).pipe(
+  //     tap(console.log),
+  //     catchError(this.handleError)
+  //   );
 
 
 }
