@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpErrorResponse} from "@angular/common/http";
-import {catchError, filter, tap} from "rxjs/operators";
+import {catchError, tap} from "rxjs/operators";
 import {Observable, throwError} from "rxjs";
 
 import {CustomResponse} from "../interface/custom-response";
@@ -12,7 +12,6 @@ import {Status} from "../enum/status.enum";
 })
 export class ServerService {
   private readonly apiUrl=`http://localhost:8080/server`;
-  private s? :Server;
   constructor(private http:HttpClient) { }
    servers$=<Observable<CustomResponse>>
      this.http.get<CustomResponse>(`${this.apiUrl}/list`)
