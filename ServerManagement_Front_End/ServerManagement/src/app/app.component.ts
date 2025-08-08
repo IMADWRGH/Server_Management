@@ -11,20 +11,11 @@ import { DataState } from './enum/data.state.enum';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-isPinging(arg0: any) {
-throw new Error('Method not implemented.');
-}
-reloadServers() {
-throw new Error('Method not implemented.');
-}
-handleServerForm() {
-throw new Error('Method not implemented.');
-}
+
 
   appState$: Observable<AppState<CustomResponse>>;
 
   readonly DataState = DataState;
-isEditMode: any;
 
   constructor(private serverService: ServerService) { }
 
