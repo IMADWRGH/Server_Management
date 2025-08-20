@@ -59,22 +59,26 @@
                   <th class="text-end">Actions</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody *ngFor="let server of appState.appData.data.servers; let i=index">
                 <tr>
                   <td>
                     <img
-                      src=""
+                      [src]="server.imageUrl"
                       width="40"
                       height="40"
                       class="rounded-circle"
-                      alt="Server"
+                      [alt]="server.name"
                     />
                   </td>
-                  <td>192.168.1.1</td>
-                  <td>Server Alpha</td>
-                  <td>16 GB</td>
-                  <td>VPS</td>
-                  <td><span class="badge bg-success">SERVER UP</span></td>
+                  <td>{{server.ipAddress}}</td>
+                  <td>{{server.name}}</td>
+                  <td>{{server.memory}}</td>
+                  <td>{{server.type}}</td>
+                  <td>
+                    <span class="badge"
+                    [ngClass]="[server.status === Status.SERVER_UP ? 'badge-success' :'badge-danger']">
+                    {{server.status  === Status.SERVER_UP ? 'SERVER UP' : 'SERVER DOWN'}}
+                  </span></td>
                   <td>
                     <button
                       class="btn btn-link text-info p-0"
