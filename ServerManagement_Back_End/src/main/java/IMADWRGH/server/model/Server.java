@@ -25,5 +25,4 @@ public class Server {
     private String imageUrl;
     private Status status;
 
-
 }
