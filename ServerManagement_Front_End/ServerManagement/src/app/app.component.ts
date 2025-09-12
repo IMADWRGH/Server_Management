@@ -23,6 +23,7 @@ export class AppComponent implements OnInit {
   constructor(private serverService: ServerService) { }
 
   ngOnInit(): void {
+   
     this.appState$ = this.serverService.servers$.pipe(
       map(response => {
         return { dataState: DataState.LOADED_STATE, appData: response }
@@ -32,6 +33,7 @@ export class AppComponent implements OnInit {
         return of({ dataState: DataState.ERROR_STATE, error })
       })
     );
+    console.log(this.appState$.forEach(element => console.log(element)));
   }
 
 

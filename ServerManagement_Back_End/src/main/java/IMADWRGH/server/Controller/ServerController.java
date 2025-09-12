@@ -7,11 +7,13 @@ import IMADWRGH.server.model.Server;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 
@@ -99,8 +101,17 @@ public class ServerController {
     @Value("${images.path}")
     private String imagesPath;
 
-    @GetMapping(path = "/image/{fileName}", produces =IMAGE_PNG_VALUE )
-    public byte[] getServerImage(@PathVariable("fileName") String fileName) throws IOException {
-return Files.readAllBytes(Paths.get(imagesPath +fileName));
+    @GetMapping(path = "/image/{fileName}", produces = IMAGE_PNG_VALUE)
+    public ResponseEntity<byte[]> getServerImage(@PathVariable("fileName") String fileName) {
+        try {
+            Path imagePath = Paths.get(imagesPath, fileName);
+            if (!Files.exists(imagePath)) {
+                return ResponseEntity.notFound().build();
+            }
+            byte[] imageBytes = Files.readAllBytes(imagePath);
+            return ResponseEntity.ok().body(imageBytes);
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 }
